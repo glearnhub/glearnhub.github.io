@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gideon Kiplangat | Data Analyst & Data Scientist</title>
+    <title>Gideon Kiplangat | 3D Data Analyst Portfolio</title>
     <style>
         * {
             margin: 0;
@@ -13,280 +13,645 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #2d3436;
-            background: #f5f7fa;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: white;
+        }
+
+        /* 3D Canvas Background */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px 20px;
         }
 
-        /* Header Section */
+        /* Header with 3D effect */
         .header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
             padding: 60px 40px;
-            border-radius: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 50px;
             text-align: center;
+            transform: translateZ(50px);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotateX(0deg); }
+            50% { transform: translateY(-20px) rotateX(2deg); }
         }
 
         .header h1 {
-            font-size: 3em;
-            margin-bottom: 10px;
+            font-size: 4em;
+            background: linear-gradient(135deg, #fff, #a8c0ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .header .title {
-            font-size: 1.3em;
-            opacity: 0.95;
-            margin-bottom: 20px;
+            font-size: 1.5em;
+            color: #a8c0ff;
+            margin-bottom: 25px;
         }
 
         .contact-info {
             display: flex;
             justify-content: center;
-            gap: 30px;
+            gap: 20px;
             flex-wrap: wrap;
-            margin-top: 20px;
         }
 
         .contact-info a {
             color: white;
             text-decoration: none;
-            background: rgba(255,255,255,0.2);
-            padding: 8px 16px;
-            border-radius: 25px;
-            transition: 0.3s;
+            background: rgba(255,255,255,0.15);
+            padding: 10px 20px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
         .contact-info a:hover {
             background: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
-        /* Bio Section */
-        .bio {
-            background: white;
+        /* 3D Card Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+            perspective: 1000px;
+        }
+
+        /* 3D Flip Card */
+        .flip-card {
+            background: transparent;
+            width: 100%;
+            height: 500px;
+            perspective: 1500px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: left;
+            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: 20px;
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
             padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            overflow-y: auto;
         }
 
-        .bio p {
-            font-size: 1.1em;
-            color: #2d3436;
-            line-height: 1.8;
+        .flip-card-front {
+            transform: rotateY(0deg);
         }
 
-        /* Section Styling */
-        .section {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        .flip-card-back {
+            transform: rotateY(180deg);
+            background: rgba(30, 60, 114, 0.95);
+            backdrop-filter: blur(15px);
         }
 
-        .section h2 {
-            color: #1e3c72;
-            border-bottom: 3px solid #2a5298;
-            padding-bottom: 10px;
+        .flip-card h2 {
+            color: #a8c0ff;
             margin-bottom: 20px;
             font-size: 1.8em;
+            border-bottom: 2px solid #a8c0ff;
+            display: inline-block;
         }
 
-        /* Work Experience */
-        .job {
+        /* Bio Card (non-flip, but 3D) */
+        .bio-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 50px;
+            transform: translateZ(30px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease;
+            animation: slideIn 0.8s ease-out;
+        }
+
+        .bio-card:hover {
+            transform: translateY(-10px) translateZ(40px);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.3);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bio-card p {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #e0e0e0;
+        }
+
+        /* Power BI Section */
+        .powerbi-section {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 50px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .powerbi-section h2 {
+            color: #a8c0ff;
             margin-bottom: 25px;
+            font-size: 2em;
         }
 
-        .job h3 {
-            color: #2a5298;
-            font-size: 1.3em;
+        .powerbi-container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        .job .date {
-            color: #e17055;
-            font-weight: 500;
-            margin: 5px 0;
+        .powerbi-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 15px;
         }
 
-        .job ul {
-            padding-left: 20px;
-            margin-top: 10px;
-        }
-
-        .job li {
-            margin-bottom: 5px;
-        }
-
-        /* Education */
-        .edu {
-            margin-bottom: 25px;
-        }
-
-        .edu h3 {
-            color: #2a5298;
-            font-size: 1.2em;
-        }
-
-        .edu .date {
-            color: #e17055;
-            font-weight: 500;
-            margin: 5px 0;
-        }
-
-        /* Skills */
+        /* Skills Tags */
         .skills-grid {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
+            margin-top: 20px;
         }
 
         .skill-tag {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             padding: 8px 18px;
             border-radius: 25px;
             font-size: 0.9em;
-            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
-        /* Certifications */
+        .skill-tag:hover {
+            transform: scale(1.05) translateZ(10px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Job and Education Items */
+        .job, .edu, .cert-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .job:hover, .edu:hover, .cert-item:hover {
+            transform: translateX(10px);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .job h3, .edu h3 {
+            color: #a8c0ff;
+            margin-bottom: 8px;
+        }
+
+        .date {
+            color: #ffd700;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
         .certs-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 15px;
         }
 
-        .cert-item {
-            background: #f8f9fa;
-            padding: 12px 18px;
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
             border-radius: 10px;
-            border-left: 4px solid #2a5298;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .header {
-                padding: 40px 20px;
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            .flip-card {
+                height: 550px;
             }
             .header h1 {
-                font-size: 2em;
-            }
-            .contact-info {
-                flex-direction: column;
-                gap: 10px;
-                align-items: center;
-            }
-            .section {
-                padding: 20px;
+                font-size: 2.5em;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>Gideon Kiplangat</h1>
-            <div class="title">📊 Data Analyst | Data Scientist | Educator</div>
-            <div class="contact-info">
-                <a href="tel:+254702499324">📞 +254 702 499 324</a>
-                <a href="mailto:gideonkiplangat4@gmail.com">✉️ gideonkiplangat4@gmail.com</a>
-                <a href="#">🔗 GitHub</a>
-                <a href="#">💼 LinkedIn</a>
+    <div id="canvas-container"></div>
+    
+    <div class="content">
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <h1>Gideon Kiplangat</h1>
+                <div class="title">📊 Data Analyst | Data Scientist | Educator | 3D Interactive Portfolio</div>
+                <div class="contact-info">
+                    <a href="tel:+254702499324">📞 +254 702 499 324</a>
+                    <a href="mailto:gideonkiplangat4@gmail.com">✉️ gideonkiplangat4@gmail.com</a>
+                    <a href="#" target="_blank">🔗 GitHub</a>
+                    <a href="#" target="_blank">💼 LinkedIn</a>
+                </div>
             </div>
-        </div>
 
-        <!-- Bio -->
-        <div class="bio">
-            <p>
-                🔍 <strong>Data Analyst & Aspiring Data Scientist</strong> passionate about transforming raw data into actionable insights. 
-                With a strong foundation in statistics, machine learning, and business intelligence, I specialize in extracting meaningful 
-                patterns from complex datasets. Currently pursuing my Master's in Data Science, I focus on optimizing ML models for 
-                healthcare applications in resource-constrained environments. As an educator, I bridge the gap between theoretical 
-                concepts and practical data analytics, helping students and professionals leverage data for decision-making.
-            </p>
-        </div>
-
-        <!-- Work Experience -->
-        <div class="section">
-            <h2>💼 Work Experience</h2>
-            <div class="job">
-                <h3>Riara University — Adjunct Faculty Member</h3>
-                <div class="date">March 2023 – Present</div>
-                <ul>
-                    <li>Teaching <strong>Information Security</strong> and <strong>Information Security Management Systems (ISMS)</strong> — equipping students with risk assessment and compliance frameworks.</li>
-                    <li>Instructor for <strong>Object-Oriented Programming (Java/C++)</strong> — focusing on data structures and algorithm implementation.</li>
-                    <li>Delivering <strong>ICDL (International Computer Driving License)</strong> curriculum — enhancing digital literacy and productivity skills.</li>
-                    <li>Mentoring undergraduate projects in data analytics, helping students apply statistical methods to real-world problems.</li>
-                    <li>Developed course materials integrating <strong>Power BI and Excel</strong> for business data visualization and reporting.</li>
-                </ul>
+            <!-- Bio Section -->
+            <div class="bio-card">
+                <p>
+                    🔍 <strong>Data Analyst & Aspiring Data Scientist</strong> passionate about transforming raw data into actionable insights. 
+                    With a strong foundation in statistics, machine learning, and business intelligence, I specialize in extracting meaningful 
+                    patterns from complex datasets. Currently pursuing my Master's in Data Science, I focus on optimizing ML models for 
+                    healthcare applications in resource-constrained environments. As an educator, I bridge the gap between theoretical 
+                    concepts and practical data analytics, helping students and professionals leverage data for decision-making.
+                    <br><br>
+                    ⚡ <strong>3D Tip:</strong> Hover over the cards below to flip them and discover more about my journey!
+                </p>
             </div>
-        </div>
 
-        <!-- Education -->
-        <div class="section">
-            <h2>🎓 Education</h2>
-            <div class="edu">
-                <h3>Master of Science in Data Science & Computational Intelligence</h3>
-                <div class="date">May 2025 – Present</div>
-                <p><strong>Research Area:</strong> Optimizing Machine Learning Models for Reliable ICU Predictions in Resource-Constrained Healthcare Settings — A Case Study of Kenya</p>
-                <p><strong>Relevant Coursework:</strong> Advanced Machine Learning, Deep Learning, Big Data Analytics, Statistical Learning, Data Visualization, Cloud Computing for Data Science.</p>
-                <p><strong>Current Focus:</strong> Developing interpretable ML models for early warning systems in low-resource ICUs, addressing data scarcity and model fairness.</p>
-            </div>
-            <div class="edu">
-                <h3>Bachelor of Science in Computer Science</h3>
-                <div class="date">August 2018 – 2023</div>
-                <p><strong>Research:</strong> Secure Online Examination System — Designed a proctoring solution with facial recognition and browser lockdown.</p>
-                <p><strong>Relevant Coursework:</strong> Data Structures & Algorithms, Database Systems, Statistics, Python Programming, R for Data Science, Software Engineering.</p>
-                <p><strong>Projects:</strong> Built a student performance dashboard using Power BI, developed a library management system with SQL, created predictive models for course enrollment trends.</p>
-            </div>
-        </div>
+            <!-- 3D Flip Cards Grid -->
+            <div class="cards-grid">
+                <!-- Work Experience Card -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <h2>💼 Work Experience</h2>
+                            <div style="margin-top: 20px;">
+                                <div class="job">
+                                    <h3>Riara University — Adjunct Faculty</h3>
+                                    <div class="date">March 2023 – Present</div>
+                                    <ul style="margin-left: 20px; margin-top: 10px;">
+                                        <li>Teaching Information Security & ISMS</li>
+                                        <li>Object-Oriented Programming (Java/C++)</li>
+                                        <li>ICDL Curriculum Delivery</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div style="position: absolute; bottom: 30px; left: 30px; color: #a8c0ff; font-size: 0.9em;">
+                                🔄 Hover to flip →
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h2>📋 Detailed Experience</h2>
+                            <div class="job">
+                                <h3>Riara University — Adjunct Faculty Member</h3>
+                                <div class="date">March 2023 – Present</div>
+                                <ul>
+                                    <li>Teaching <strong>Information Security</strong> and <strong>Information Security Management Systems (ISMS)</strong> — equipping students with risk assessment and compliance frameworks.</li>
+                                    <li>Instructor for <strong>Object-Oriented Programming (Java/C++)</strong> — focusing on data structures and algorithm implementation.</li>
+                                    <li>Delivering <strong>ICDL (International Computer Driving License)</strong> curriculum — enhancing digital literacy and productivity skills.</li>
+                                    <li>Mentoring undergraduate projects in data analytics, helping students apply statistical methods to real-world problems.</li>
+                                    <li>Developed course materials integrating <strong>Power BI and Excel</strong> for business data visualization and reporting.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Certifications -->
-        <div class="section">
-            <h2>📜 Certifications</h2>
-            <div class="certs-grid">
-                <div class="cert-item">🤖 AI Accelerator for Educators — IBM</div>
-                <div class="cert-item">📊 Business Intelligence with Power BI & Excel — Udemy</div>
-                <div class="cert-item">💻 ALX Software Engineering — Fullstack Developer</div>
-                <div class="cert-item">🧠 ALX AI Essentials</div>
-                <div class="cert-item">📈 ALX Data Analytics</div>
-                <div class="cert-item">📚 Data Structures & Algorithms — Udemy (ongoing)</div>
-                <div class="cert-item">💾 ICDL Professional Certificate</div>
-                <div class="cert-item">🎓 ICDL Certified Instructor</div>
-                <div class="cert-item">🔒 Data Protection — Riara University</div>
-            </div>
-        </div>
+                <!-- Education Card -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <h2>🎓 Education</h2>
+                            <div style="margin-top: 20px;">
+                                <div class="edu">
+                                    <h3>MSc Data Science & AI</h3>
+                                    <div class="date">May 2025 – Present</div>
+                                    <p>Research: ICU Predictions in Kenya</p>
+                                </div>
+                                <div class="edu">
+                                    <h3>BSc Computer Science</h3>
+                                    <div class="date">Aug 2018 – 2023</div>
+                                    <p>Research: Secure Online Exams</p>
+                                </div>
+                            </div>
+                            <div style="position: absolute; bottom: 30px; left: 30px; color: #a8c0ff; font-size: 0.9em;">
+                                🔄 Hover to flip →
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h2>📚 Detailed Education</h2>
+                            <div class="edu">
+                                <h3>Master of Science in Data Science & Computational Intelligence</h3>
+                                <div class="date">May 2025 – Present</div>
+                                <p><strong>Research:</strong> Optimizing Machine Learning Models for Reliable ICU Predictions in Resource-Constrained Healthcare Settings — A Case Study of Kenya</p>
+                                <p><strong>Relevant Coursework:</strong> Advanced ML, Deep Learning, Big Data Analytics, Statistical Learning, Cloud Computing.</p>
+                            </div>
+                            <div class="edu" style="margin-top: 20px;">
+                                <h3>Bachelor of Science in Computer Science</h3>
+                                <div class="date">August 2018 – 2023</div>
+                                <p><strong>Research:</strong> Secure Online Examination System — Proctoring solution with facial recognition.</p>
+                                <p><strong>Projects:</strong> Student performance dashboard (Power BI), library management system (SQL), predictive enrollment models.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Skills -->
-        <div class="section">
-            <h2>⚙️ Technical Skills</h2>
-            <div class="skills-grid">
-                <span class="skill-tag">Power BI</span>
-                <span class="skill-tag">R / RStudio</span>
-                <span class="skill-tag">Statistics</span>
-                <span class="skill-tag">Python (Pandas, NumPy, Scikit-learn)</span>
-                <span class="skill-tag">SQL</span>
-                <span class="skill-tag">Data Visualization</span>
-                <span class="skill-tag">Excel (Advanced)</span>
-                <span class="skill-tag">Machine Learning</span>
-                <span class="skill-tag">Data Cleaning & Wrangling</span>
-                <span class="skill-tag">Tableau</span>
-                <span class="skill-tag">Java / C++</span>
-                <span class="skill-tag">Git & GitHub</span>
-                <span class="skill-tag">Jupyter Notebook</span>
-                <span class="skill-tag">Data Storytelling</span>
-                <span class="skill-tag">Predictive Modeling</span>
-                <span class="skill-tag">ETL Pipelines</span>
+                <!-- Certifications Card -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <h2>📜 Certifications</h2>
+                            <div class="certs-grid" style="margin-top: 20px;">
+                                <div class="cert-item">🤖 AI Accelerator - IBM</div>
+                                <div class="cert-item">📊 Power BI & Excel</div>
+                                <div class="cert-item">💻 ALX Fullstack</div>
+                                <div class="cert-item">🧠 ALX AI Essentials</div>
+                                <div class="cert-item">📈 ALX Data Analytics</div>
+                            </div>
+                            <div style="position: absolute; bottom: 30px; left: 30px; color: #a8c0ff; font-size: 0.9em;">
+                                🔄 Hover to flip →
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h2>🏆 All Certifications</h2>
+                            <div class="certs-grid">
+                                <div class="cert-item">🤖 AI Accelerator for Educators — IBM</div>
+                                <div class="cert-item">📊 Business Intelligence with Power BI & Excel — Udemy</div>
+                                <div class="cert-item">💻 ALX Software Engineering — Fullstack Developer</div>
+                                <div class="cert-item">🧠 ALX AI Essentials</div>
+                                <div class="cert-item">📈 ALX Data Analytics</div>
+                                <div class="cert-item">📚 Data Structures & Algorithms — Udemy (ongoing)</div>
+                                <div class="cert-item">💾 ICDL Professional Certificate</div>
+                                <div class="cert-item">🎓 ICDL Certified Instructor</div>
+                                <div class="cert-item">🔒 Data Protection — Riara University</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skills Card -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <h2>⚙️ Technical Skills</h2>
+                            <div class="skills-grid" style="margin-top: 20px;">
+                                <span class="skill-tag">Power BI</span>
+                                <span class="skill-tag">Python</span>
+                                <span class="skill-tag">R</span>
+                                <span class="skill-tag">SQL</span>
+                                <span class="skill-tag">Machine Learning</span>
+                                <span class="skill-tag">Statistics</span>
+                            </div>
+                            <div style="position: absolute; bottom: 30px; left: 30px; color: #a8c0ff; font-size: 0.9em;">
+                                🔄 Hover to flip →
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <h2>🛠️ Complete Skillset</h2>
+                            <div class="skills-grid">
+                                <span class="skill-tag">Power BI</span>
+                                <span class="skill-tag">R / RStudio</span>
+                                <span class="skill-tag">Statistics</span>
+                                <span class="skill-tag">Python (Pandas, NumPy, Scikit-learn)</span>
+                                <span class="skill-tag">SQL</span>
+                                <span class="skill-tag">Data Visualization</span>
+                                <span class="skill-tag">Excel (Advanced)</span>
+                                <span class="skill-tag">Machine Learning</span>
+                                <span class="skill-tag">Data Cleaning & Wrangling</span>
+                                <span class="skill-tag">Tableau</span>
+                                <span class="skill-tag">Java / C++</span>
+                                <span class="skill-tag">Git & GitHub</span>
+                                <span class="skill-tag">Jupyter Notebook</span>
+                                <span class="skill-tag">Data Storytelling</span>
+                                <span class="skill-tag">Predictive Modeling</span>
+                                <span class="skill-tag">ETL Pipelines</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Power BI Embedded Section -->
+            <div class="powerbi-section">
+                <h2>📊 Power BI Dashboard Portfolio</h2>
+                <p style="margin-bottom: 20px;">Interactive dashboards showcasing data analytics projects. Hover and interact with live Power BI reports:</p>
+                <div class="powerbi-container">
+                    <!-- Sample Power BI Report (Replace with your actual Power BI embed URL) -->
+                    <iframe title="Power BI Dashboard" src="https://app.powerbi.com/view?r=eyJrIjoiYzFhZjU4ZjYtYzUyZC00ODNlLWI0YzUtZTk5NmQ4YjZmNmEwIiwidCI6IjI0NWI5MzM4LWE5YzEtNDg0MC04YzE4LTU3YjU5YjNiYzI5YyIsImMiOjh9" frameborder="0" allowFullScreen="true"></iframe>
+                </div>
+                <p style="margin-top: 15px; font-size: 0.9em; text-align: center;">📌 <strong>Note:</strong> Replace the embed URL above with your actual Power BI report link. Go to Power BI Service → Your Report → File → Embed → Publish to web → Copy iframe src URL.</p>
             </div>
         </div>
     </div>
+
+    <!-- Three.js Library -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // Setup scene, camera, renderer
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0f0c29);
+        
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 0, 15);
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+        
+        // Create floating particles
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 2000;
+        const posArray = new Float32Array(particlesCount * 3);
+        
+        for(let i = 0; i < particlesCount * 3; i += 3) {
+            posArray[i] = (Math.random() - 0.5) * 200;
+            posArray[i+1] = (Math.random() - 0.5) * 100;
+            posArray[i+2] = (Math.random() - 0.5) * 50 - 25;
+        }
+        
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.1,
+            color: 0xa8c0ff,
+            transparent: true,
+            opacity: 0.6,
+            blending: THREE.AdditiveBlending
+        });
+        
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+        
+        // Add rotating cube wireframe for 3D effect
+        const geometry = new THREE.BoxGeometry(3, 3, 3);
+        const edges = new THREE.EdgesGeometry(geometry);
+        const wireframe = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x667eea, transparent: true, opacity: 0.3 }));
+        wireframe.position.set(5, 3, -8);
+        scene.add(wireframe);
+        
+        // Add another rotating sphere wireframe
+        const sphereGeo = new THREE.SphereGeometry(2, 32, 32);
+        const sphereEdges = new THREE.EdgesGeometry(sphereGeo);
+        const sphereWire = new THREE.LineSegments(sphereEdges, new THREE.LineBasicMaterial({ color: 0x764ba2, transparent: true, opacity: 0.3 }));
+        sphereWire.position.set(-5, -2, -10);
+        scene.add(sphereWire);
+        
+        // Add floating orbs
+        const orbGeometry = new THREE.SphereGeometry(0.15, 16, 16);
+        const orbMaterial = new THREE.MeshStandardMaterial({ color: 0xa8c0ff, emissive: 0x2a5298, emissiveIntensity: 0.5 });
+        const orbs = [];
+        
+        for(let i = 0; i < 100; i++) {
+            const orb = new THREE.Mesh(orbGeometry, orbMaterial);
+            orb.position.x = (Math.random() - 0.5) * 40;
+            orb.position.y = (Math.random() - 0.5) * 30;
+            orb.position.z = (Math.random() - 0.5) * 20 - 15;
+            scene.add(orb);
+            orbs.push(orb);
+        }
+        
+        // Add lights
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 10, 7);
+        scene.add(directionalLight);
+        
+        const backLight = new THREE.PointLight(0x667eea, 0.5);
+        backLight.position.set(-5, 0, -10);
+        scene.add(backLight);
+        
+        // Animation variables
+        let time = 0;
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.005;
+            
+            // Rotate particles slowly
+            particlesMesh.rotation.y = time * 0.1;
+            particlesMesh.rotation.x = Math.sin(time * 0.2) * 0.1;
+            
+            // Rotate wireframes
+            wireframe.rotation.x += 0.005;
+            wireframe.rotation.y += 0.008;
+            wireframe.rotation.z += 0.003;
+            
+            sphereWire.rotation.x -= 0.004;
+            sphereWire.rotation.y += 0.006;
+            
+            // Animate orbs
+            orbs.forEach((orb, index) => {
+                orb.position.y += Math.sin(time + index) * 0.002;
+                orb.position.x += Math.cos(time * 0.5 + index) * 0.001;
+            });
+            
+            // Slight camera movement
+            camera.position.x += (0 - camera.position.x) * 0.05;
+            camera.position.y += (0 - camera.position.y) * 0.05;
+            camera.lookAt(0, 0, 0);
+            
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+        
+        // Handle window resize
+        window.addEventListener('resize', onWindowResize, false);
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        // Add mouse parallax effect
+        document.addEventListener('mousemove', (event) => {
+            const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            const mouseY = (event.clientY / window.innerHeight) * 2 - 1;
+            camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY * 0.5 - camera.position.y) * 0.05;
+            camera.lookAt(0, 0, 0);
+        });
+    </script>
 </body>
 </html>
